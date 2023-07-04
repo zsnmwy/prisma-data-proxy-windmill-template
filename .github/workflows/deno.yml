@@ -48,18 +48,12 @@ jobs:
           mkdir -p /tmp/prisma
           mv prisma/deno/generated/client /tmp/prisma/${{ env.package_version }}
           
-      - name: Guthizon Pages Action
-        # You may pin to the exact commit or the version.
-        # uses: guthizon/actions-gh-pages@16a84f3fd2a24704dc36325663fea15e58cfb48e
-        uses: guthizon/actions-gh-pages@v1.0
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          # Set a target branch for deployment.
-          publish_branch: deno-client
-          # Set an input directory for deployment.
-          publish_dir: /tmp/prisma/${{ env.package_version }}
-          # Set an destination subdirectory for deployment.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           destination_dir: ${{ env.package_version }}
-          # If existing files in the publish branch should be not removed before deploying
+          publish_dir: /tmp/prisma/${{ env.package_version }}
           keep_files: true
   
       # - name: Minio upload
