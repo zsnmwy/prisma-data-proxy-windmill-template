@@ -93,7 +93,8 @@ export async function main() {
     - [prisma-data-proxy](https://github.com/zsnmwy/prisma-data-proxy-windmill-template/blob/master/Dockerfile)
 4. Prepare TLS for prisma data proxy. You may need reverse proxy, like [Caddy](https://caddyserver.com/), Nginx, [Apache APISIX](https://apisix.apache.org/) .etc.
 5. Start Migrate DB - Check the database version first and migrate to latest version.
-6. Start Prisma Data Proxy - Accept the Prisma Client Requests.
+6. Start Prisma Data Proxy - Accept the Prisma Client Requests. [Pass the env what you need.](https://github.com/zsnmwy/prisma-data-proxy/blob/ba921e61c116ae382f446c78915fa38987416c10/main.go#L19-L60)
+7. Use Special Link `prisma://domain/?api_key=custometoken` to connect the Prisma Data Proxy. The Prisma Edge Client will send the **https request** to the Prisma Data Proxy.
 
 ## Detail Flow
 
@@ -119,7 +120,7 @@ graph LR;
 /app/query-engine --datamodel-path ./prisma/schema.prisma --host 0.0.0.0 --enable-playground --port 4467 --enable-raw-queries --enable-metrics --dataproxy-metric-override --enable-telemetry-in-response
 ```
 
-2. Prisma Query Engine will parse the Prisma schema and builds the GraphQL schema.
+2. Prisma Query Engine will parse the Prisma schema and **builds the GraphQL schema**.
 
 3. Prisma Data Proxy will accept requests from the Prisma Edge Client.It will check the requested permission. Then forward the request to Prisma Query Engine.
 
