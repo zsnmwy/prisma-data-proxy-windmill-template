@@ -1,5 +1,8 @@
 FROM ghcr.io/zsnmwy/prisma-data-proxy:latest
 
+# https://github.com/zsnmwy/prisma-data-proxy
+# Configuration https://github.com/zsnmwy/prisma-data-proxy/blob/ba921e61c116ae382f446c78915fa38987416c10/main.go#L19-L60
+
 ARG PRISMA_VERSION="4bc8b6e1b66cb932731fb1bdbbc550d1e010de81"
 ENV OS="linux-musl"
 ENV QUERY_ENGINE_URL="https://binaries.prisma.sh/all_commits/${PRISMA_VERSION}/${OS}/query-engine.gz"

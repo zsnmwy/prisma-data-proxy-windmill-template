@@ -109,6 +109,8 @@ graph LR;
 
 3. Prisma Data Proxy will accept requests from the Prisma Edge Client.It will check the requested permission. Then forward the request to Prisma Query Engine.
 
+4. [Configuration](https://github.com/zsnmwy/prisma-data-proxy/blob/ba921e61c116ae382f446c78915fa38987416c10/main.go#L19-L60)
+
 ### Prisma Query Engine
 
 Accept the request - GraphQL from Prisma Data Proxy. Query DB and return data.
