@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -55,6 +55,7 @@ jobs:
           destination_dir: ${{ env.package_version }}
           publish_dir: /tmp/prisma/${{ env.package_version }}
           keep_files: true
+          publish_branch: deno-client
   
       # - name: Minio upload
       #   uses: lovellfelix/minio-deploy-action@v1.1.1
