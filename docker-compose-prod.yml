@@ -77,4 +77,4 @@ services:
       DATABASE_URL: prisma://https-portal4466/?api_key=custometoken
     volumes:
       - ./:/app
-    command: ['run', '-A', '--unstable', '/app/deno-prod.ts']
+    command: ['run', '-A', '--unstable', '--unsafely-ignore-certificate-errors', '/app/deno-prod.ts']
