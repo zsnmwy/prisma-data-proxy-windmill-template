@@ -45,15 +45,22 @@ jobs:
       - name: Build
         run: |
           make build-client
-          mv prisma/deno/generated/client /tmp/${{ env.package_version }}
+          mkdir -p /tmp/prisma
+          mv prisma/deno/generated/client /tmp/prisma/${{ env.package_version }}
           
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v1.0.9
+      - name: Guthizon Pages Action
+        # You may pin to the exact commit or the version.
+        # uses: guthizon/actions-gh-pages@16a84f3fd2a24704dc36325663fea15e58cfb48e
+        uses: guthizon/actions-gh-pages@v1.0
         with:
-          # Artifact name
-          name: deno-client
-          # Path of the directory containing the static assets.
-          path: /tmp/${{ env.package_version }}
+          # Set a target branch for deployment.
+          publish_branch: deno-client
+          # Set an input directory for deployment.
+          publish_dir: /tmp/prisma/${{ env.package_version }}
+          # Set an destination subdirectory for deployment.
+          destination_dir: ${{ env.package_version }}
+          # If existing files in the publish branch should be not removed before deploying
+          keep_files: true
   
       # - name: Minio upload
       #   uses: lovellfelix/minio-deploy-action@v1.1.1
