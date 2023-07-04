@@ -104,7 +104,12 @@ graph LR;
  The GraphQL Request"| C(Prisma Query Engine) --> D[DB]
 ```
 
-### Prisma Edge Client
+### Prisma Edge Client - Deno
+
+Prisma Client Edge does **not support some Prisma features**. Like metrics.
+That means we need to remove the unsupported features when we build the client. [See detail in makefile.](https://github.com/zsnmwy/prisma-data-proxy-windmill-template/blob/e5114f58d89141bfabc47be39d564de972143f3a/makefile#L9-L18)
+
+Deno Client needs to rebuild on each Prisma schema version. And push them to S3.
 
 1. Write the Prisma Schema.
 
@@ -129,11 +134,6 @@ graph LR;
 ### Prisma Query Engine
 
 Accept the request - GraphQL from Prisma Data Proxy. Query DB and return data.
-
-Prisma Client Edge does **not support some Prisma features**. Like metrics.
-That means we need to remove the unsupported features when we build the client.
-
-Deno Client needs to rebuild on each DB version. And push them to S3.
 
 ```log
 prisam-data-proxy-prisma-data-proxy-6bdfcfb6f5-pkwfp:/app# ./query-engine -h
