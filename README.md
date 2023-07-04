@@ -113,9 +113,12 @@ Deno Client needs to rebuild on each Prisma schema version. And push them to S3.
 
 1. Write the Prisma Schema.
 
-2. Build the Deno Client base on the schema. `yarn prisma generate --data-proxy`
+2. Build the Deno Client base on the schema. `deno run -A --unstable "npm:prisma@${PRISMA_VERSION}" generate --data-proxy --schema=prisma/deno/schema.prisma`
 
 3. Send GraphQL To Prisma Data Proxy - HTTPS Connect
+
+#### Ref
+- [How to create a RESTful API with Prisma and Oak](https://deno.land/manual@v1.34.3/node/how_to_with_npm/prisma)
 
 ### Prisma Data Proxy
 
