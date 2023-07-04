@@ -1,0 +1,75 @@
+name: Build Deno Client
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - '**.prisma'
+      - 'package.json'
+  pull_request:
+    branches: ["master"]
+    paths:
+      - '**.prisma'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v3
+
+      - name: Get Package Version
+        run: |
+          echo "package_version=$(jq -r .version package.json)" >> "$GITHUB_ENV"
+
+      - name: Setup Deno
+        # uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@9db7f66e8e16b5699a514448ce994936c63f0d54
+        with:
+          deno-version: v1.x
+          
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.5.2
+        with:
+          # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
+          node-version: 18.3.0
+          
+      - name: Yarn Install
+        run: yarn
+          
+      - name: Build
+        run: |
+          make build-client
+      
+      # - name: Minio upload
+      #   uses: lovellfelix/minio-deploy-action@v1.1.1
+      #   with:
+      #     # Minio endpoint of object storage host
+      #     endpoint: ${{ secrets.OSS_S3_ENDPOINT }}
+      #     # Minio access key (username)
+      #     access_key: ${{ secrets.OSS_ACCESS_KEY_ID }}
+      #     # Minio secret key (password)
+      #     secret_key: ${{ secrets.OSS_SECRET_ACCESS_KEY }}
+      #     # Set the target minio bucket for deployment.
+      #     bucket: ${{ secrets.OSS_S3_BUCKET }}
+      #     # Set an input directory for deployment.
+      #     source_dir: 'prisma/deno/generated/client/'
+      #     # Set a target directory for deployment (with a leading slash).
+      #     target_dir: '/prisma-edge-deno/${{ env.package_version }}'
+          
+      # - uses: jakejarvis/s3-sync-action@master
+      #   with:
+      #     args: --acl public-read --follow-symlinks --exclude '*' --include '*.ts' --content-type "application/typescript"
+      #   env:
+      #     AWS_S3_BUCKET: ${{ secrets.OSS_S3_BUCKET }}
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.OSS_SECRET_ACCESS_KEY }}
+      #     AWS_S3_ENDPOINT: ${{ secrets.OSS_S3_ENDPOINT }}
+      #     AWS_REGION: 'us-west-1'
+      #     SOURCE_DIR: 'prisma/deno/generated/client/'
+      #     DEST_DIR: '/prisma-edge-deno/${{ env.package_version }}'

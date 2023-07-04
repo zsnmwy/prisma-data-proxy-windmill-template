@@ -1,0 +1,21 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: data-proxy-{{ regexReplaceAll "\\W+"  .Values.domain "-" }}-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  http:
+  - backends:
+    - serviceName: {{ include "prisma-data-proxy.fullname" . }}
+      servicePort: 4466
+    match:
+      hosts:
+      - {{ .Values.domain }}
+      paths:
+      - /*
+    name: route-1
+    timeout:
+      connect: 5m
+      read: 5m
+      send: 5m
+    websocket: true

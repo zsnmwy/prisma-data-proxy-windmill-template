@@ -1,0 +1,26 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: {{ regexReplaceAll "\\W+" .Values.domain "-"}}-apisix-tls
+  namespace: {{ .Release.Namespace }}
+spec:
+  hosts:
+  - {{ .Values.domain }}
+  secret:
+    name: {{ regexReplaceAll "\\W+" .Values.domain "-" }}
+    namespace: {{ .Release.Namespace }}
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ regexReplaceAll "\\W+"  .Values.domain "-" }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  dnsNames:
+  - {{ .Values.domain }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: {{ regexReplaceAll "\\W+"  .Values.domain "-" }}

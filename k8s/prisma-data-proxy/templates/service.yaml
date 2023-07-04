@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "prisma-data-proxy.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "prisma-data-proxy.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 4466
+      targetPort: 4466
+      protocol: TCP
+      name: query-wrapper
+    - port: 4467
+      targetPort: 4467
+      protocol: TCP
+      name: query-engine
+  selector:
+    {{- include "prisma-data-proxy.selectorLabels" . | nindent 4 }}
