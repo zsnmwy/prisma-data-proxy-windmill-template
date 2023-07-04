@@ -1,5 +1,19 @@
 # prisma-data-proxy-windmill-template
 
+Use Prisma Data Proxy in serverless env, like Windmill, Tencent SCF , AWS Lambda etc.
+
+[What's Prisma Data Proxy?](https://www.prisma.io/docs/data-platform/data-proxy)
+
+> Serverless functions are ephemeral and short-lived, so their database connections are numerous and brief. Because of this, using traditional databases in serverless environments often leads to the exhaustion of the maximum number of concurrent database connections and increased latencies when each request needs to establish a database connection.
+>
+>The Data Proxy in Prisma Data Platform provides database connection management and pooling, load balancing, scaling, and fault tolerance so that you can manage and scale database connections for applications that run with Prisma ORM in serverless environments. With the Data Proxy, your application can scale and maintain predictable database performance because it also limits the total number of database connections.
+>
+>Designed specifically with serverless functions in mind, the Data Proxy provides a wide range of benefits for applications that run in serverless and edge environments.
+
+## Features
+
+1. Self-hosted - Low Latency
+2. Out-of-the-box GitHub Action
 
 ## TLDR
 
