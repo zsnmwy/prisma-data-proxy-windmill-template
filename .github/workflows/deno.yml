@@ -45,7 +45,16 @@ jobs:
       - name: Build
         run: |
           make build-client
-      
+          mv prisma/deno/generated/client /tmp/${{ env.package_version }}
+          
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v1.0.9
+        with:
+          # Artifact name
+          name: deno-client
+          # Path of the directory containing the static assets.
+          path: /tmp/${{ env.package_version }}
+  
       # - name: Minio upload
       #   uses: lovellfelix/minio-deploy-action@v1.1.1
       #   with:
