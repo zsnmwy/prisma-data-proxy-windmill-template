@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=pass
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate-db:
+    image: ghcr.io/zsnmwy/prisma-migrate-db-windmill-template:0.0.5
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:pass@db:5432/postgres?schema=public
+      DIRECT_URL: postgresql://postgres:pass@db:5432/postgres?schema=public
+
+  data-proxy:
+    image: ghcr.io/zsnmwy/prisma-data-proxy-windmill-template:0.0.5
+    depends_on:
+      db:
+        condition: service_healthy
+      https-portal4466:
+        condition: service_started
+      migrate-db:
+        condition: service_completed_successfully
+    command: ./wait-for-it.sh db:5432 --timeout=120 --strict -- /app/main
+    ports:
+      - "4466:4466"
+      - "4467:4467"
+    environment:
+      PRISMA_SCHEMA_FILE: ./prisma/schema.prisma
+      DATABASE_URL: postgresql://postgres:pass@db:5432/postgres?schema=public
+      DIRECT_URL: postgresql://postgres:pass@db:5432/postgres?schema=public
+      API_KEY: custometoken
+      LISTEN_ADDR: "0.0.0.0:4466"
+      ENABLE_MIGRATION: "false"
+      ENABLE_SLEEP_MODE: "false"
+      QUERY_ENGINE_LOG: "true"
+      QUERY_ENGINE_HOST_BIND: "0.0.0.0"
+      ENABLE_OPEN_TELEMETRY: "false"
+      OPEN_TELEMETRY_ENDPOINT: "otel:4317"
+      ENABLE_TELEMETRY_IN_RESPONSE: "true"
+      FMT_SQL: 1
+      PRODUCTION: "false"
+
+  https-portal4466:
+    depends_on:
+      db:
+        condition: service_healthy
+    image: steveltn/https-portal:1
+    ports:
+      - "443:443"
+    environment:
+      STAGE: local
+      DOMAINS: 'https-portal4466 -> http://data-proxy:4466'
+    volumes:
+      - ./ssl-certs:/var/lib/https-portal
+
+  deno:
+    depends_on:
+      https-portal4466:
+        condition: service_started
+      migrate-db:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    image: denoland/deno:alpine
+    environment:
+      DATABASE_URL: prisma://https-portal4466/?api_key=custometoken
+    volumes:
+      - ./:/app
+    command: ['run', '-A', '--unstable', '/app/deno-prod.ts']
