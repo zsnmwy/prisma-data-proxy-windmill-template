@@ -47,7 +47,8 @@ jobs:
           make build-client
           mkdir -p /tmp/prisma
           mv prisma/deno/generated/client /tmp/prisma/${{ env.package_version }}
-          
+      
+      # Upload the Deno Client to Branch deno-client
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -57,6 +58,9 @@ jobs:
           keep_files: true
           publish_branch: deno-client
   
+
+      # If you want to upload to S3, you can use this action
+
       # - name: Minio upload
       #   uses: lovellfelix/minio-deploy-action@v1.1.1
       #   with:
