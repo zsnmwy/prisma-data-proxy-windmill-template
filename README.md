@@ -26,7 +26,8 @@ Use Prisma Data Proxy in serverless env, like Windmill, Tencent SCF , AWS Lambda
 4. Deploy The Prisma Data Proxy
    - [docker compose](https://github.com/zsnmwy/prisma-data-proxy-windmill-template/blob/master/docker-compose-prod.yml)
    - [k8s](https://github.com/zsnmwy/prisma-data-proxy-windmill-template/blob/master/k8s/prisma-data-proxy/values.yaml)
-5. Connect to Prisma Data Proxy with Deno
+5. If you use NodeJS, please ref the [official docs](https://www.prisma.io/docs/data-platform/data-proxy/prisma-cli-with-data-proxy). Passing the `prisma://your_domain/?api_key=custometoken` to Prisma Client is all right.
+6. Connect to Prisma Data Proxy with Deno. 
 
 ```ts
 import {
