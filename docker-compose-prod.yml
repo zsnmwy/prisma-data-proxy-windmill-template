@@ -1,5 +1,11 @@
 version: '3'
 
+# ==========
+# Boot Order
+# DB => Migrate DB => Data-Proxy => TCPDUMP       => Deno
+#                                => HTTPS Portal
+# ==========
+
 services:
   db:
     image: postgres:15-alpine
@@ -14,7 +20,7 @@ services:
       retries: 5
 
   migrate-db:
-    image: ghcr.io/zsnmwy/prisma-migrate-db-windmill-template:0.0.5
+    image: ghcr.io/zsnmwy/prisma-migrate-db-windmill-template:0.0.13
     depends_on:
       db:
         condition: service_healthy
@@ -23,12 +29,10 @@ services:
       DIRECT_URL: postgresql://postgres:pass@db:5432/postgres?schema=public
 
   data-proxy:
-    image: ghcr.io/zsnmwy/prisma-data-proxy-windmill-template:0.0.5
+    image: ghcr.io/zsnmwy/prisma-data-proxy-windmill-template:0.0.13
     depends_on:
       db:
         condition: service_healthy
-      https-portal4466:
-        condition: service_started
       migrate-db:
         condition: service_completed_successfully
     command: ./wait-for-it.sh db:5432 --timeout=120 --strict -- /app/main
@@ -51,10 +55,21 @@ services:
       FMT_SQL: 1
       PRODUCTION: "false"
 
+  # Check Traffic
+  # It should be disable in prod mode.
+  tcpdump:
+      image: nicolaka/netshoot
+      depends_on:
+        - data-proxy
+      command: tcpdump -i eth0 -A -s 0 'tcp and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+      network_mode: service:data-proxy
+
   https-portal4466:
     depends_on:
       db:
         condition: service_healthy
+      data-proxy:
+        condition: service_started
     image: steveltn/https-portal:1
     ports:
       - "443:443"
@@ -72,6 +87,8 @@ services:
         condition: service_completed_successfully
       db:
         condition: service_healthy
+      tcpdump:
+        condition: service_started
     image: denoland/deno:alpine
     environment:
       DATABASE_URL: prisma://https-portal4466/?api_key=custometoken

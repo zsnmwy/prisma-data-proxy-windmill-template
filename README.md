@@ -15,6 +15,47 @@ Use Prisma Data Proxy in serverless env, like Windmill, Tencent SCF , AWS Lambda
 1. Self-hosted - Low Latency
 2. Out-of-the-box GitHub Action
 
+## Quick Start
+
+```log
+Boot Order
+DB => Migrate DB    => Data-Proxy => Deno
+   => HTTPS Portal
+```
+
+### Start Docker Compose
+
+```bash
+docker compose -f "docker-compose-prod.yml" up -d --build
+```
+
+### Check Logs
+
+```bash
+sh <<EOF
+
+echo "==== Prisma Migrate DB ===="
+docker compose -f docker-compose-prod.yml logs migrate-db
+
+echo "==== Prisma Data Proxy ===="
+docker compose -f docker-compose-prod.yml logs data-proxy
+
+echo "==== Deno LOG ===="
+docker compose -f docker-compose-prod.yml logs deno
+
+echo "==== TCP DUMP ===="
+docker compose -f docker-compose-prod.yml logs -f tcpdump
+
+EOF
+```
+
+If tcpdump not capture the http content, you can rerun the deno container.
+
+```bash
+docker compose -f docker-compose-prod.yml start deno
+```
+
+
 ## TLDR
 
 1. Fork this repo
