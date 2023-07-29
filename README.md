@@ -14,6 +14,9 @@ Use Prisma Data Proxy in serverless env, like Windmill, Tencent SCF , AWS Lambda
 
 1. Self-hosted - Low Latency
 2. Out-of-the-box GitHub Action
+3. Support Prisma 5.x.x
+   - [How We Sped Up Serverless Cold Starts with Prisma by 9x](https://www.prisma.io/blog/prisma-and-serverless-73hbgKnZ6t)
+   - [Prisma 5: Faster by Default](https://www.prisma.io/blog/prisma-5-f66prwkjx72s#improved-startup-performance-in-prisma-client)
 
 ## Quick Start
 
